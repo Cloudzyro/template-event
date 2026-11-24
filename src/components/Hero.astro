@@ -3,11 +3,6 @@ import { event, venue, stats, topics } from "../data/event";
 ---
 
 <section class="hero" aria-labelledby="hero-title">
-  <div class="bg" aria-hidden="true">
-    <div class="grid-lines"></div>
-    <div class="orb orb-a"></div>
-    <div class="orb orb-b"></div>
-  </div>
   <div class="wrap inner">
     <div class="badge" aria-hidden="true">
       <div class="lanyard"></div>
@@ -27,9 +22,9 @@ import { event, venue, stats, topics } from "../data/event";
     </div>
     <div class="copy">
     <p class="meta">
-      <span class="chip"><span class="dot" style="background:var(--accent)"></span>{event.shortDate}</span>
-      <span class="chip">{event.city}</span>
-      <span class="chip countdown" data-start={event.startDate} hidden></span>
+      <span>{event.shortDate}</span>
+      <span>{event.city}</span>
+      <span class="countdown" data-start={event.startDate} hidden></span>
     </p>
     <h1 id="hero-title">
       <span class="line">{event.name}</span>
@@ -60,10 +55,13 @@ import { event, venue, stats, topics } from "../data/event";
       ))}
     </dl>
   </div>
-  <div class="ticker" aria-label="Topics">
-    <ul class="track">
-      {[...topics, ...topics].map((t, i) => <li aria-hidden={i >= topics.length ? "true" : undefined}>{t}</li>)}
-    </ul>
+  <div class="ticker">
+    <div class="wrap">
+      <p class="ticker-label">Topics</p>
+      <ul class="track">
+        {topics.map((t) => <li>{t}</li>)}
+      </ul>
+    </div>
   </div>
 </section>
 
@@ -88,53 +86,23 @@ import { event, venue, stats, topics } from "../data/event";
     padding-top: clamp(3rem, 8vw, 6rem);
     border-bottom: 1px solid var(--line);
   }
-  .bg {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-  }
-  .grid-lines {
-    position: absolute;
-    inset: 0;
-    background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
-    background-size: 64px 64px;
-    opacity: 0.35;
-    mask-image: radial-gradient(ellipse at 70% 20%, #000 10%, transparent 70%);
-  }
-  .orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(70px);
-    opacity: 0.55;
-  }
-  .orb-a {
-    width: 32rem;
-    height: 32rem;
-    right: -8rem;
-    top: -10rem;
-    background: radial-gradient(circle, var(--accent), transparent 65%);
-    opacity: 0.35;
-  }
-  .orb-b {
-    width: 26rem;
-    height: 26rem;
-    right: 18%;
-    top: 14rem;
-    background: radial-gradient(circle, var(--pink), transparent 65%);
-    opacity: 0.3;
-  }
   .inner {
     position: relative;
   }
   .meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.25rem 1.25rem;
     margin-bottom: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--muted);
   }
-  .meta .chip {
-    background: rgb(255 255 255 / 0.03);
-    color: var(--text);
+  .meta span[hidden] {
+    display: none;
+  }
+  .meta .countdown {
+    color: var(--accent);
   }
   .inner {
     display: grid;
@@ -161,14 +129,9 @@ import { event, venue, stats, topics } from "../data/event";
       grid-row: 1;
       position: relative;
       padding-top: 0;
-      animation: sway 6s ease-in-out infinite alternate;
       transform-origin: 50% -4rem;
       transform: rotate(5deg);
     }
-  }
-  @keyframes sway {
-    from { transform: rotate(4deg); }
-    to { transform: rotate(7deg); }
   }
   .lanyard {
     width: 2.4rem;
@@ -189,7 +152,7 @@ import { event, venue, stats, topics } from "../data/event";
     background: var(--accent);
     padding: 1rem 1.4rem 1.1rem;
     font-family: var(--font-display);
-    font-weight: 700;
+    font-weight: 600;
     font-size: 1.2rem;
     display: grid;
     justify-items: center;
@@ -206,14 +169,12 @@ import { event, venue, stats, topics } from "../data/event";
   }
   .b-label {
     font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
+    font-size: 0.8rem;
     color: #5b5b70;
   }
   .b-name {
     font-family: var(--font-display);
-    font-weight: 700;
+    font-weight: 600;
     font-size: 2.4rem;
     line-height: 0.95;
     letter-spacing: -0.03em;
@@ -245,7 +206,7 @@ import { event, venue, stats, topics } from "../data/event";
   }
   h1 {
     font-size: clamp(4.2rem, 15vw, 10rem);
-    font-weight: 700;
+    font-weight: 600;
     line-height: 0.86;
     letter-spacing: -0.055em;
     margin-left: -0.04em;
@@ -254,8 +215,7 @@ import { event, venue, stats, topics } from "../data/event";
     display: block;
   }
   .outline {
-    color: transparent;
-    -webkit-text-stroke: 2px var(--accent);
+    color: var(--accent);
   }
   .lede {
     margin-top: 1.75rem;
@@ -272,13 +232,11 @@ import { event, venue, stats, topics } from "../data/event";
   }
   .label {
     font-family: var(--font-mono);
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
+    font-size: 0.875rem;
     color: var(--muted);
   }
   .value {
-    font-weight: 600;
+    font-weight: 500;
     margin-top: 0.25rem;
   }
   .sub {
@@ -311,61 +269,41 @@ import { event, venue, stats, topics } from "../data/event";
     margin: 0;
     font-family: var(--font-display);
     font-size: clamp(2rem, 5vw, 3.25rem);
-    font-weight: 700;
+    font-weight: 500;
     line-height: 1;
+    font-variant-numeric: tabular-nums;
   }
   dt {
     color: var(--muted);
     font-size: 0.9rem;
   }
   .ticker {
-    position: relative;
-    background: var(--accent);
-    color: var(--accent-ink);
-    overflow: hidden;
-    padding-block: 0.9rem;
+    border-top: 1px solid var(--line);
+    padding-block: 1.25rem;
+  }
+  .ticker .wrap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 2rem;
+  }
+  .ticker-label {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--muted);
   }
   .track {
     display: flex;
-    width: max-content;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
     list-style: none;
     margin: 0;
     padding: 0;
-    animation: scroll 40s linear infinite;
   }
   .track li {
     font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 1.15rem;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-    padding-inline: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 3rem;
-  }
-  .track li::after {
-    content: "";
-    width: 0.6rem;
-    height: 0.6rem;
-    background: var(--accent-ink);
-    transform: rotate(45deg);
-    margin-left: 1.5rem;
-  }
-  @keyframes scroll {
-    to {
-      transform: translateX(-50%);
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .track {
-      animation: none;
-      flex-wrap: wrap;
-      width: auto;
-    }
-    .track li[aria-hidden="true"] {
-      display: none;
-    }
+    font-weight: 500;
+    font-size: 1.05rem;
   }
   @media (max-width: 640px) {
     .stats {
@@ -377,9 +315,6 @@ import { event, venue, stats, topics } from "../data/event";
     }
     .stats div:nth-child(n + 3) {
       border-top: 1px solid var(--line);
-    }
-    .outline {
-      -webkit-text-stroke-width: 1.5px;
     }
   }
 </style>

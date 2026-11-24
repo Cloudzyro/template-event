@@ -5,7 +5,7 @@
 export const event = {
   name: "Fieldline",
   edition: "2027",
-  tagline: "Two days on design, engineering and the craft in between.",
+  tagline: "Two days on design, engineering and the craft in between",
   description:
     "Fieldline is a two-day conference for designers and engineers who build products together. Talks, hands-on workshops and long hallway conversations in Portland, Oregon.",
   // Shown in the hero and used for the "days to go" counter (ISO date, local start time).

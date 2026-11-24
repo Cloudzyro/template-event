@@ -126,10 +126,10 @@ const sorted = [...sessions].sort((a, b) => a.day - b.day || a.start.localeCompa
   .days a {
     text-decoration: none;
     font-family: var(--font-display);
-    font-weight: 700;
+    font-weight: 500;
     padding: 0.45rem 0.9rem;
     border: 1px solid var(--line);
-    border-radius: 999px;
+    border-radius: 10px;
     display: inline-flex;
     gap: 0.5rem;
     align-items: baseline;
@@ -153,11 +153,11 @@ const sorted = [...sessions].sort((a, b) => a.day - b.day || a.start.localeCompa
   .filters button {
     font: inherit;
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--muted);
     background: transparent;
     border: 1px solid var(--line);
-    border-radius: 999px;
+    border-radius: 8px;
     padding: 0.4rem 0.85rem;
     display: inline-flex;
     align-items: center;
@@ -242,7 +242,7 @@ const sorted = [...sessions].sort((a, b) => a.day - b.day || a.start.localeCompa
   }
   .kind-break,
   .kind-social {
-    background: repeating-linear-gradient(-45deg, transparent 0 12px, rgb(255 255 255 / 0.02) 12px 24px);
+    background: color-mix(in srgb, var(--text) 2%, transparent);
   }
   .kind-keynote {
     --track: var(--accent);
@@ -284,7 +284,7 @@ const sorted = [...sessions].sort((a, b) => a.day - b.day || a.start.localeCompa
   }
   .who {
     margin-top: 0.6rem;
-    font-weight: 600;
+    font-weight: 500;
   }
   .who a {
     text-decoration-color: var(--accent);

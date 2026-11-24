@@ -26,12 +26,11 @@ const Heading = headingLevel;
     border: 1px solid var(--line);
     border-radius: var(--radius);
     overflow: hidden;
-    transition: transform 0.2s ease, border-color 0.2s ease;
+    transition: border-color 0.16s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .card:hover,
   .card:focus-within {
-    transform: translateY(-4px);
-    border-color: var(--accent);
+    border-color: color-mix(in srgb, var(--text) 40%, transparent);
   }
   .avatar :global(svg) {
     width: 100%;
@@ -61,9 +60,7 @@ const Heading = headingLevel;
   .company {
     font-family: var(--font-mono);
     font-size: 0.8rem;
-    color: var(--accent);
+    color: var(--muted);
     margin-top: 0.2rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
   }
 </style>

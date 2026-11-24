@@ -55,8 +55,12 @@ h3,
 h4 {
   font-family: var(--font-display);
   line-height: 1.05;
+  font-weight: 500;
   letter-spacing: -0.02em;
   margin: 0;
+}
+h4 {
+  letter-spacing: 0;
 }
 
 p {
@@ -78,7 +82,7 @@ p {
   color: var(--accent-ink);
   padding: 0.6rem 1rem;
   border-radius: 10px;
-  font-weight: 700;
+  font-weight: 600;
 }
 .skip:focus {
   top: 1rem;
@@ -96,19 +100,8 @@ p {
 
 .eyebrow {
   font-family: var(--font-mono);
-  font-size: 0.8rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--accent);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-.eyebrow::before {
-  content: "";
-  width: 1.6rem;
-  height: 2px;
-  background: currentColor;
+  font-size: 0.875rem;
+  color: var(--muted);
 }
 
 .section-head {
@@ -131,22 +124,28 @@ p {
   justify-content: center;
   gap: 0.5rem;
   padding: 0.85rem 1.4rem;
-  border-radius: 999px;
-  font-weight: 700;
+  border-radius: 10px;
+  font-weight: 600;
   font-family: var(--font-display);
   font-size: 1rem;
   text-decoration: none;
   border: 2px solid transparent;
   cursor: pointer;
-  transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+  transition:
+    transform 0.12s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.16s cubic-bezier(0.22, 1, 0.36, 1);
   white-space: nowrap;
 }
-.btn:hover {
-  transform: translateY(-2px);
+.btn:active {
+  transform: scale(0.98);
 }
 .btn-primary {
   background: var(--accent);
   color: var(--accent-ink);
+}
+.btn-primary:hover {
+  background: #d6ff70;
 }
 .btn-ghost {
   border-color: var(--line);
@@ -163,10 +162,8 @@ p {
   gap: 0.4rem;
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.25rem 0.6rem;
-  border-radius: 999px;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
   border: 1px solid var(--line);
   color: var(--muted);
 }
