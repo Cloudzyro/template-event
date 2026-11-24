@@ -1,0 +1,9 @@
+---
+import Base from "../../layouts/Base.astro";
+import Speakers from "../../components/Speakers.astro";
+import { event, speakers } from "../../data/event";
+---
+
+<Base title="Speakers" description={`Meet the ${speakers.length} speakers at ${event.name} ${event.edition}, ${event.dateLabel} in ${event.city}.`}>
+  <Speakers />
+</Base>

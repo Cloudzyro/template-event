@@ -1,0 +1,73 @@
+---
+import { event, nav } from "../data/event";
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="wrap grid">
+    <div>
+      <p class="name">{event.name} {event.edition}</p>
+      <p class="muted">{event.dateLabel}<br />{event.city}</p>
+    </div>
+    <nav aria-label="Footer">
+      <ul>
+        {nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+        <li><a href="/#tickets">Tickets</a></li>
+        <li><a href="/#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <ul class="social">
+      {event.social.map((s) => <li><a href={s.href} rel="noopener">{s.label}</a></li>)}
+      <li><a href={`mailto:${event.contactEmail}`}>{event.contactEmail}</a></li>
+    </ul>
+  </div>
+  <div class="wrap legal">
+    <p>&copy; {year} {event.name}. All rights reserved.</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--line);
+    padding-block: 3.5rem 2rem;
+    background: var(--bg-raised);
+  }
+  .grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  }
+  .name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .muted {
+    color: var(--muted);
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+  }
+  a {
+    color: var(--muted);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+  a:hover {
+    color: var(--text);
+    text-decoration: underline;
+  }
+  .legal {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.875rem;
+  }
+</style>

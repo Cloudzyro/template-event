@@ -1,0 +1,28 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base title="Page not found" description="This page doesn't exist.">
+  <section class="wrap nf">
+    <p class="eyebrow">Error 404</p>
+    <h1>Wrong room.</h1>
+    <p>This page doesn't exist, but the conference does.</p>
+    <a class="btn btn-primary" href="/">Back to the home page</a>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    padding-block: clamp(5rem, 14vw, 10rem);
+    display: grid;
+    gap: 1.25rem;
+    justify-items: start;
+  }
+  h1 {
+    font-size: clamp(3.5rem, 12vw, 8rem);
+  }
+  p:not(.eyebrow) {
+    color: var(--muted);
+    font-size: 1.2rem;
+  }
+</style>

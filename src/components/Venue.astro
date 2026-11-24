@@ -1,0 +1,173 @@
+---
+import { venue } from "../data/event";
+---
+
+<section id="venue" class="section" aria-labelledby="venue-title">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Venue and travel</span>
+      <h2 id="venue-title">{venue.name}</h2>
+      <p>{venue.description}</p>
+    </div>
+    <div class="layout">
+      <a class="map" href={venue.mapUrl} target="_blank" rel="noopener">
+        <svg viewBox="0 0 600 400" preserveAspectRatio="xMidYMid slice" role="img" aria-label={`Stylized map placeholder around ${venue.name}. Opens a map search for ${venue.address}.`}>
+          <title>Map placeholder for {venue.name}</title>
+          <rect width="600" height="400" fill="#12121b"></rect>
+          <path d="M0 290 C120 250 200 330 320 290 S520 210 600 240 V400 H0Z" fill="#163042"></path>
+          <g stroke="#2a2a3b" stroke-width="10" fill="none" stroke-linecap="round">
+            <path d="M40 0 V400"></path><path d="M180 0 V260"></path><path d="M420 0 V230"></path>
+            <path d="M0 80 H600"></path><path d="M0 180 H600"></path>
+          </g>
+          <g stroke="#202030" stroke-width="4" fill="none">
+            <path d="M110 0 V280"></path><path d="M300 0 V290"></path><path d="M520 0 V230"></path>
+            <path d="M0 130 H600"></path><path d="M0 230 H420"></path>
+          </g>
+          <path d="M0 40 L600 210" stroke="#58c7ff" stroke-width="4" stroke-dasharray="10 8" fill="none" opacity=".7"></path>
+          <circle cx="300" cy="180" r="44" fill="#c6ff3d" opacity=".15"></circle>
+          <circle cx="300" cy="180" r="14" fill="#c6ff3d"></circle>
+          <circle cx="300" cy="180" r="5" fill="#0b0b12"></circle>
+        </svg>
+        <span class="map-label">
+          <strong>{venue.address}</strong>
+          <span>Open in maps</span>
+        </span>
+      </a>
+      <ul class="routes">
+        {venue.gettingThere.map((g) => (
+          <li>
+            <h3>{g.title}</h3>
+            <p>{g.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <h3 class="hotels-title">Where to stay</h3>
+    <ul class="hotels">
+      {venue.hotels.map((h) => (
+        <li>
+          <p class="distance">{h.distance}</p>
+          <h4>{h.name}</h4>
+          <p class="rate">{h.rate} with code <code>{h.code}</code></p>
+          <a href={h.href} rel="noopener">Book a room<span class="visually-hidden"> at {h.name}</span></a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .layout {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 1.5rem;
+  }
+  .map {
+    position: relative;
+    display: block;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    text-decoration: none;
+    min-height: 18rem;
+  }
+  .map svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .map-label {
+    position: absolute;
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 0.9rem 1.1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .map-label span {
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .map:hover {
+    border-color: var(--accent);
+  }
+  .routes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .routes li {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.25rem;
+  }
+  .routes h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.3rem;
+  }
+  .routes p {
+    color: var(--muted);
+    font-size: 0.97rem;
+  }
+  .hotels-title {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    margin: 3rem 0 1.25rem;
+  }
+  .hotels {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  }
+  .hotels li {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+  }
+  .distance {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .hotels h4 {
+    font-size: 1.3rem;
+    margin: 0.4rem 0 0.5rem;
+  }
+  .rate {
+    color: var(--muted);
+  }
+  code {
+    font-family: var(--font-mono);
+    color: var(--text);
+    background: var(--bg-card);
+    padding: 0.1rem 0.4rem;
+    border-radius: 6px;
+  }
+  .hotels a {
+    display: inline-block;
+    margin-top: 0.9rem;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  @media (max-width: 860px) {
+    .layout {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

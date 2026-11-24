@@ -1,0 +1,198 @@
+---
+import Base from "../../layouts/Base.astro";
+import { days, event, sessions, speakers, tracks, type Speaker } from "../../data/event";
+import { avatarSvg } from "../../lib/art";
+import { formatTime } from "../../lib/time";
+
+export function getStaticPaths() {
+  return speakers.map((speaker) => ({ params: { slug: speaker.slug }, props: { speaker } }));
+}
+
+const { speaker } = Astro.props as { speaker: Speaker };
+const theirs = sessions
+  .filter((s) => s.speakers?.includes(speaker.slug))
+  .sort((a, b) => a.day - b.day || a.start.localeCompare(b.start));
+const trackById = Object.fromEntries(tracks.map((t) => [t.id, t]));
+const dayLabel = Object.fromEntries(days.map((d) => [d.day, d.date]));
+const i = speakers.findIndex((s) => s.slug === speaker.slug);
+const next = speakers[(i + 1) % speakers.length];
+---
+
+<Base title={`${speaker.name}, ${speaker.role} at ${speaker.company}`} description={speaker.bio}>
+  <article class="wrap profile">
+    <a class="back" href="/speakers/">All speakers</a>
+    <div class="layout">
+      <div class="portrait" set:html={avatarSvg(speaker.name, `Illustrated portrait placeholder for ${speaker.name}`)} />
+      <div>
+        <p class="eyebrow">Speaker</p>
+        <h1>{speaker.name}</h1>
+        <p class="role">{speaker.role}, <span>{speaker.company}</span></p>
+        {speaker.pronouns && <p class="pronouns">{speaker.pronouns}</p>}
+        <p class="bio">{speaker.bio}</p>
+        {speaker.links && (
+          <ul class="links">
+            {speaker.links.map((l) => <li><a href={l.href} rel="noopener">{l.label}</a></li>)}
+          </ul>
+        )}
+      </div>
+    </div>
+
+    <section aria-labelledby="sessions-title" class="sessions">
+      <h2 id="sessions-title">At {event.name}</h2>
+      <ul>
+        {theirs.map((s) => {
+          const track = s.track === "all" ? null : trackById[s.track];
+          return (
+            <li style={track ? `--track:${track.color}` : "--track:var(--accent)"}>
+              <p class="when">{dayLabel[s.day]}, {formatTime(s.start)} to {formatTime(s.end)} <span>{s.room}</span></p>
+              <h3>{s.title}</h3>
+              {s.summary && <p class="summary">{s.summary}</p>}
+              <p class="track">{track ? `${track.name} track` : "Everyone"}{s.kind === "workshop" ? ", workshop" : ""}{s.kind === "keynote" ? ", keynote" : ""}</p>
+            </li>
+          );
+        })}
+      </ul>
+      <div class="actions">
+        <a class="btn btn-primary" href="/#tickets">Get tickets</a>
+        <a class="btn btn-ghost" href={`/speakers/${next.slug}/`}>Next speaker: {next.name}</a>
+      </div>
+    </section>
+  </article>
+</Base>
+
+<style>
+  .profile {
+    padding-block: clamp(2.5rem, 6vw, 5rem);
+  }
+  .back {
+    display: inline-block;
+    color: var(--muted);
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 2rem;
+  }
+  .back::before {
+    content: "";
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-left: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+    margin-right: 0.6rem;
+  }
+  .back:hover {
+    color: var(--text);
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 22rem) 1fr;
+    gap: clamp(1.5rem, 5vw, 4rem);
+    align-items: start;
+  }
+  .portrait {
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .portrait :global(svg) {
+    width: 100%;
+    height: auto;
+  }
+  h1 {
+    font-size: clamp(2.75rem, 7vw, 5rem);
+    margin-top: 1rem;
+  }
+  .role {
+    font-size: 1.25rem;
+    margin-top: 1rem;
+    font-family: var(--font-display);
+  }
+  .role span {
+    color: var(--accent);
+  }
+  .pronouns {
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+  }
+  .bio {
+    margin-top: 1.5rem;
+    font-size: 1.15rem;
+    max-width: 40rem;
+    color: #d6d6e2;
+  }
+  .links {
+    list-style: none;
+    padding: 0;
+    margin: 1.25rem 0 0;
+    display: flex;
+    gap: 1rem;
+  }
+  .links a {
+    color: var(--accent);
+  }
+  .sessions {
+    margin-top: clamp(3rem, 6vw, 4.5rem);
+  }
+  .sessions h2 {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    margin-bottom: 1.25rem;
+  }
+  .sessions ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  .sessions li {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--track);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.4rem;
+  }
+  .when {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+  }
+  .when span {
+    color: var(--muted);
+    margin-left: 0.5rem;
+  }
+  .sessions h3 {
+    font-size: 1.4rem;
+    margin-top: 0.5rem;
+    line-height: 1.2;
+  }
+  .summary {
+    color: var(--muted);
+    margin-top: 0.4rem;
+  }
+  .track {
+    margin-top: 0.6rem;
+    font-size: 0.9rem;
+    color: var(--track);
+    font-weight: 600;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+  .actions .btn {
+    white-space: normal;
+    text-align: center;
+  }
+  @media (max-width: 720px) {
+    .layout {
+      grid-template-columns: 1fr;
+    }
+    .portrait {
+      max-width: 14rem;
+    }
+  }
+</style>

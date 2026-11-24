@@ -1,0 +1,76 @@
+---
+import { faqs } from "../data/event";
+---
+
+<section id="faq" class="section" aria-labelledby="faq-title">
+  <div class="wrap layout">
+    <div class="section-head">
+      <span class="eyebrow">FAQ</span>
+      <h2 id="faq-title">Good questions</h2>
+      <p>Anything else? Write to us below.</p>
+    </div>
+    <div class="list">
+      {faqs.map((f, i) => (
+        <details open={i === 0}>
+          <summary>{f.q}</summary>
+          <p>{f.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 2rem 4rem;
+    align-items: start;
+  }
+  .list {
+    border-top: 1px solid var(--line);
+  }
+  details {
+    border-bottom: 1px solid var(--line);
+  }
+  summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.2rem;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary::after {
+    content: "";
+    flex: none;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background:
+      linear-gradient(var(--accent), var(--accent)) center / 10px 2px no-repeat,
+      linear-gradient(var(--accent), var(--accent)) center / 2px 10px no-repeat;
+    transition: transform 0.2s ease;
+  }
+  details[open] summary::after {
+    transform: rotate(45deg);
+  }
+  details p {
+    color: var(--muted);
+    padding-bottom: 1.4rem;
+    max-width: 42rem;
+  }
+  @media (max-width: 860px) {
+    .layout {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

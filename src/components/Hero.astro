@@ -1,0 +1,385 @@
+---
+import { event, venue, stats, topics } from "../data/event";
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="bg" aria-hidden="true">
+    <div class="grid-lines"></div>
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+  </div>
+  <div class="wrap inner">
+    <div class="badge" aria-hidden="true">
+      <div class="lanyard"></div>
+      <div class="badge-card">
+        <div class="badge-top"><span class="hole"></span><span>{event.name} {event.edition}</span></div>
+        <div class="badge-body">
+          <p class="b-label">Attendee</p>
+          <p class="b-name">Your name<br />here</p>
+          <p class="b-pass">Conference + Lab</p>
+          <div class="b-row">
+            <span>{event.shortDate}</span>
+            <span>{event.city}</span>
+          </div>
+          <div class="barcode"></div>
+        </div>
+      </div>
+    </div>
+    <div class="copy">
+    <p class="meta">
+      <span class="chip"><span class="dot" style="background:var(--accent)"></span>{event.shortDate}</span>
+      <span class="chip">{event.city}</span>
+      <span class="chip countdown" data-start={event.startDate} hidden></span>
+    </p>
+    <h1 id="hero-title">
+      <span class="line">{event.name}</span>
+      <span class="line outline">{event.edition}</span>
+    </h1>
+    <p class="lede">{event.tagline}</p>
+    <div class="facts">
+      <div>
+        <p class="label">When</p>
+        <p class="value">{event.dateLabel}</p>
+      </div>
+      <div>
+        <p class="label">Where</p>
+        <p class="value">{venue.name}<br /><span class="sub">{venue.address}</span></p>
+      </div>
+    </div>
+    <div class="actions">
+      <a class="btn btn-primary" href="#tickets">Get your ticket</a>
+      <a class="btn btn-ghost" href="#agenda">See the agenda</a>
+    </div>
+    </div>
+    <dl class="stats">
+      {stats.map((s) => (
+        <div>
+          <dt>{s.label}</dt>
+          <dd>{s.value}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+  <div class="ticker" aria-label="Topics">
+    <ul class="track">
+      {[...topics, ...topics].map((t, i) => <li aria-hidden={i >= topics.length ? "true" : undefined}>{t}</li>)}
+    </ul>
+  </div>
+</section>
+
+<script>
+  const el = document.querySelector<HTMLElement>(".countdown");
+  if (el?.dataset.start) {
+    const days = Math.ceil((new Date(el.dataset.start).getTime() - Date.now()) / 86400000);
+    if (days > 1) {
+      el.textContent = `${days} days to go`;
+      el.hidden = false;
+    } else if (days === 1) {
+      el.textContent = "Tomorrow";
+      el.hidden = false;
+    }
+  }
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding-top: clamp(3rem, 8vw, 6rem);
+    border-bottom: 1px solid var(--line);
+  }
+  .bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .grid-lines {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    opacity: 0.35;
+    mask-image: radial-gradient(ellipse at 70% 20%, #000 10%, transparent 70%);
+  }
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: 0.55;
+  }
+  .orb-a {
+    width: 32rem;
+    height: 32rem;
+    right: -8rem;
+    top: -10rem;
+    background: radial-gradient(circle, var(--accent), transparent 65%);
+    opacity: 0.35;
+  }
+  .orb-b {
+    width: 26rem;
+    height: 26rem;
+    right: 18%;
+    top: 14rem;
+    background: radial-gradient(circle, var(--pink), transparent 65%);
+    opacity: 0.3;
+  }
+  .inner {
+    position: relative;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .meta .chip {
+    background: rgb(255 255 255 / 0.03);
+    color: var(--text);
+  }
+  .inner {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .copy {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .stats {
+    grid-column: 1 / -1;
+  }
+  .badge {
+    display: none;
+  }
+  @media (min-width: 1000px) {
+    .inner {
+      grid-template-columns: 1fr 21rem;
+      gap: 3rem;
+    }
+    .badge {
+      display: block;
+      grid-column: 2;
+      grid-row: 1;
+      position: relative;
+      padding-top: 0;
+      animation: sway 6s ease-in-out infinite alternate;
+      transform-origin: 50% -4rem;
+      transform: rotate(5deg);
+    }
+  }
+  @keyframes sway {
+    from { transform: rotate(4deg); }
+    to { transform: rotate(7deg); }
+  }
+  .lanyard {
+    width: 2.4rem;
+    height: 5rem;
+    margin: -6rem auto 0;
+    background: repeating-linear-gradient(90deg, var(--pink) 0 6px, #d94a8f 6px 12px);
+    border-radius: 0 0 6px 6px;
+  }
+  .badge-card {
+    margin-top: -0.6rem;
+    background: #f4f4f8;
+    color: #0b0b12;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 40px 80px -20px rgb(0 0 0 / 0.7), 0 0 0 1px rgb(255 255 255 / 0.1);
+  }
+  .badge-top {
+    background: var(--accent);
+    padding: 1rem 1.4rem 1.1rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.2rem;
+    display: grid;
+    justify-items: center;
+    gap: 0.8rem;
+  }
+  .hole {
+    width: 3.2rem;
+    height: 0.7rem;
+    border-radius: 1rem;
+    background: var(--bg);
+  }
+  .badge-body {
+    padding: 1.4rem 1.4rem 1.6rem;
+  }
+  .b-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #5b5b70;
+  }
+  .b-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 2.4rem;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-top: 0.5rem;
+  }
+  .b-pass {
+    display: inline-block;
+    margin-top: 1rem;
+    background: #0b0b12;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+  }
+  .b-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    margin-top: 1.4rem;
+    padding-top: 1rem;
+    border-top: 2px dashed #c9c9d6;
+  }
+  .barcode {
+    height: 3rem;
+    margin-top: 1rem;
+    background: repeating-linear-gradient(90deg, #0b0b12 0 2px, transparent 2px 5px, #0b0b12 5px 9px, transparent 9px 11px, #0b0b12 11px 12px, transparent 12px 16px);
+  }
+  h1 {
+    font-size: clamp(4.2rem, 15vw, 10rem);
+    font-weight: 700;
+    line-height: 0.86;
+    letter-spacing: -0.055em;
+    margin-left: -0.04em;
+  }
+  .line {
+    display: block;
+  }
+  .outline {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--accent);
+  }
+  .lede {
+    margin-top: 1.75rem;
+    font-size: clamp(1.25rem, 2.6vw, 1.75rem);
+    font-family: var(--font-display);
+    max-width: 34rem;
+    line-height: 1.3;
+  }
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem 3rem;
+    margin-top: 2rem;
+  }
+  .label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+  }
+  .value {
+    font-weight: 600;
+    margin-top: 0.25rem;
+  }
+  .sub {
+    color: var(--muted);
+    font-weight: 400;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2.25rem;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: clamp(3rem, 7vw, 5rem) 0 0;
+    border-top: 1px solid var(--line);
+  }
+  .stats div {
+    padding: 1.5rem 1rem 1.75rem 0;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 0.25rem;
+  }
+  .stats div + div {
+    padding-left: 1.25rem;
+    border-left: 1px solid var(--line);
+  }
+  dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    font-weight: 700;
+    line-height: 1;
+  }
+  dt {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  .ticker {
+    position: relative;
+    background: var(--accent);
+    color: var(--accent-ink);
+    overflow: hidden;
+    padding-block: 0.9rem;
+  }
+  .track {
+    display: flex;
+    width: max-content;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    animation: scroll 40s linear infinite;
+  }
+  .track li {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.15rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    padding-inline: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+  }
+  .track li::after {
+    content: "";
+    width: 0.6rem;
+    height: 0.6rem;
+    background: var(--accent-ink);
+    transform: rotate(45deg);
+    margin-left: 1.5rem;
+  }
+  @keyframes scroll {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .track {
+      animation: none;
+      flex-wrap: wrap;
+      width: auto;
+    }
+    .track li[aria-hidden="true"] {
+      display: none;
+    }
+  }
+  @media (max-width: 640px) {
+    .stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .stats div:nth-child(3) {
+      padding-left: 0;
+      border-left: 0;
+    }
+    .stats div:nth-child(n + 3) {
+      border-top: 1px solid var(--line);
+    }
+    .outline {
+      -webkit-text-stroke-width: 1.5px;
+    }
+  }
+</style>

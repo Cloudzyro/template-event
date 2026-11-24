@@ -1,0 +1,168 @@
+---
+import { contact, event } from "../data/event";
+
+// Set PUBLIC_FORM_ENDPOINT (Formspree, Basin, a Supabase function...) to receive messages.
+// Without it, the form opens the visitor's email app with the message filled in.
+const endpoint = (import.meta.env.PUBLIC_FORM_ENDPOINT ?? "").trim();
+const mailto = `mailto:${event.contactEmail}`;
+---
+
+<section id="contact" class="section contact" aria-labelledby="contact-title">
+  <div class="wrap layout">
+    <div class="section-head">
+      <span class="eyebrow">Contact</span>
+      <h2 id="contact-title">{contact.title}</h2>
+      <p>{contact.text}</p>
+      <p>Or email <a href={mailto}>{event.contactEmail}</a>.</p>
+    </div>
+    <form
+      class="form"
+      action={endpoint || mailto}
+      method="post"
+      enctype={endpoint ? undefined : "text/plain"}
+      data-endpoint={endpoint}
+      data-mailto={event.contactEmail}
+    >
+      <div class="row">
+        <label>
+          <span>Name</span>
+          <input name="name" autocomplete="name" required />
+        </label>
+        <label>
+          <span>Email</span>
+          <input name="email" type="email" autocomplete="email" required />
+        </label>
+      </div>
+      <label>
+        <span>Topic</span>
+        <select name="topic">
+          <option>General question</option>
+          <option>Speaking</option>
+          <option>Sponsorship</option>
+          <option>Accessibility</option>
+          <option>Press</option>
+        </select>
+      </label>
+      <label>
+        <span>Message</span>
+        <textarea name="message" rows="5" required></textarea>
+      </label>
+      <div class="visually-hidden" aria-hidden="true">
+        <label>Leave this empty <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" /></label>
+      </div>
+      {!endpoint && (
+        <p class="note">This form isn't connected yet, so sending it opens your email app with your message filled in.</p>
+      )}
+      <button class="btn btn-primary" type="submit">Send message</button>
+      <p class="status" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>("#contact form");
+  if (form) {
+    const status = form.querySelector<HTMLElement>(".status")!;
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      if (data.get("_gotcha")) return;
+      const endpoint = form.dataset.endpoint;
+      if (!endpoint) {
+        const subject = encodeURIComponent(`${data.get("topic")}: message from ${data.get("name")}`);
+        const body = encodeURIComponent(`${data.get("message")}\n\n${data.get("name")}\n${data.get("email")}`);
+        window.location.href = `mailto:${form.dataset.mailto}?subject=${subject}&body=${body}`;
+        return;
+      }
+      const button = form.querySelector<HTMLButtonElement>("button[type=submit]")!;
+      button.disabled = true;
+      status.textContent = "Sending...";
+      try {
+        const res = await fetch(endpoint, { method: "POST", body: data, headers: { Accept: "application/json" } });
+        if (!res.ok) throw new Error(String(res.status));
+        form.reset();
+        status.textContent = "Thanks! Your message is on its way. We'll reply within two working days.";
+      } catch {
+        status.textContent = `Sorry, that didn't go through. Please email ${form.dataset.mailto} instead.`;
+      } finally {
+        button.disabled = false;
+      }
+    });
+  }
+</script>
+
+<style>
+  .contact {
+    background: var(--bg-raised);
+    border-top: 1px solid var(--line);
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 2rem 4rem;
+    align-items: start;
+  }
+  .section-head a {
+    color: var(--accent);
+    overflow-wrap: anywhere;
+  }
+  .form {
+    position: relative;
+    display: grid;
+    gap: 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: clamp(1.25rem, 4vw, 2rem);
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  label {
+    display: grid;
+    gap: 0.4rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  input,
+  select,
+  textarea {
+    font: inherit;
+    font-weight: 400;
+    color: var(--text);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 0.75rem 0.9rem;
+    width: 100%;
+  }
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    border-color: var(--accent);
+  }
+  .note {
+    font-size: 0.9rem;
+    color: var(--muted);
+    border-left: 3px solid var(--blue);
+    padding-left: 0.75rem;
+  }
+  .btn {
+    justify-self: start;
+  }
+  .status:empty {
+    display: none;
+  }
+  @media (max-width: 860px) {
+    .layout {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 520px) {
+    .row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

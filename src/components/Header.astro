@@ -1,0 +1,152 @@
+---
+import { event, nav } from "../data/event";
+---
+
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label={`${event.name} ${event.edition}, home`}>
+      <svg viewBox="0 0 64 64" width="32" height="32" aria-hidden="true"><rect width="64" height="64" rx="14" fill="var(--accent)"></rect><path d="M16 14h32v8H25v7h19v8H25v13h-9z" fill="var(--bg)"></path></svg>
+      <span>{event.name}<span class="yr">{event.edition}</span></span>
+    </a>
+    <nav aria-label="Main" class="desktop-nav">
+      <ul>
+        {nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+      </ul>
+    </nav>
+    <a class="btn btn-primary cta" href="/#tickets">Get tickets</a>
+    <details class="mobile-nav">
+      <summary aria-label="Menu">
+        <span class="bars" aria-hidden="true"><span></span><span></span></span>
+      </summary>
+      <nav aria-label="Main, mobile">
+        <ul>
+          {nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+          <li><a class="btn btn-primary" href="/#tickets">Get tickets</a></li>
+        </ul>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<script>
+  // Close the mobile menu after a link is chosen.
+  document.querySelectorAll<HTMLAnchorElement>(".mobile-nav a").forEach((a) =>
+    a.addEventListener("click", () => a.closest("details")?.removeAttribute("open")),
+  );
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    min-height: 4rem;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.25rem;
+    text-decoration: none;
+    margin-right: auto;
+  }
+  .yr {
+    color: var(--accent);
+    margin-left: 0.3rem;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .desktop-nav ul {
+    display: flex;
+    gap: 1.6rem;
+  }
+  .desktop-nav a {
+    text-decoration: none;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .desktop-nav a:hover {
+    color: var(--text);
+  }
+  .cta {
+    padding: 0.55rem 1.1rem;
+  }
+  .mobile-nav {
+    display: none;
+    position: relative;
+  }
+  .mobile-nav summary {
+    list-style: none;
+    cursor: pointer;
+    width: 2.75rem;
+    height: 2.75rem;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+  .mobile-nav summary::-webkit-details-marker {
+    display: none;
+  }
+  .bars {
+    display: grid;
+    gap: 6px;
+    width: 18px;
+  }
+  .bars span {
+    height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+  }
+  .mobile-nav nav {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.6rem);
+    width: min(80vw, 18rem);
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 0.75rem;
+    box-shadow: 0 20px 50px rgb(0 0 0 / 0.5);
+  }
+  .mobile-nav li a:not(.btn) {
+    display: block;
+    padding: 0.7rem 0.8rem;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 10px;
+  }
+  .mobile-nav li a:not(.btn):hover {
+    background: var(--bg-card);
+  }
+  .mobile-nav .btn {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+  @media (max-width: 860px) {
+    .desktop-nav {
+      display: none;
+    }
+    .mobile-nav {
+      display: block;
+    }
+  }
+  @media (max-width: 420px) {
+    .cta {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,128 @@
+---
+import { event, ticketNotes, tickets } from "../data/event";
+---
+
+<section id="tickets" class="section" aria-labelledby="tickets-title">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Tickets</span>
+      <h2 id="tickets-title">Grab a seat</h2>
+      <p>Every ticket includes both days, lunch, coffee and the opening night party.</p>
+    </div>
+    <ul class="tiers">
+      {tickets.map((t) => (
+        <li class:list={["tier", { featured: t.featured, sold: t.soldOut }]}>
+          <p class="note">{t.soldOut ? "Sold out" : t.note}</p>
+          <h3>{t.name}</h3>
+          <p class="price"><span class="amt">{t.price}</span><span class="per"> per person</span></p>
+          <ul class="features">
+            {t.features.map((f) => <li>{f}</li>)}
+          </ul>
+          {t.soldOut ? (
+            <span class="btn btn-ghost disabled" aria-disabled="true">Sold out</span>
+          ) : (
+            <a class:list={["btn", t.featured ? "btn-primary" : "btn-ghost"]} href={t.url || event.ticketUrl} rel="noopener">
+              Buy {t.name}<span class="visually-hidden"> ticket</span>
+            </a>
+          )}
+        </li>
+      ))}
+    </ul>
+    <p class="fine">{ticketNotes}</p>
+  </div>
+</section>
+
+<style>
+  .tiers {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+    align-items: stretch;
+  }
+  .tier {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 1.75rem;
+  }
+  .featured {
+    background: linear-gradient(160deg, #23301a, var(--bg-card) 55%);
+    border: 2px solid var(--accent);
+    box-shadow: 0 30px 80px -30px rgb(198 255 61 / 0.35);
+  }
+  .sold {
+    opacity: 0.6;
+  }
+  .note {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+  }
+  .sold .note {
+    color: var(--muted);
+  }
+  h3 {
+    font-size: 1.6rem;
+    margin-top: 0.75rem;
+  }
+  .price {
+    font-family: var(--font-display);
+    font-size: 3.25rem;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    margin-top: 0.5rem;
+  }
+  .sold .amt {
+    text-decoration: line-through;
+  }
+  .price .per {
+    font-size: 0.95rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--muted);
+  }
+  .features {
+    list-style: none;
+    padding: 0;
+    margin: 1.25rem 0 1.75rem;
+    display: grid;
+    gap: 0.6rem;
+    flex: 1;
+    align-content: start;
+  }
+  .features li {
+    display: flex;
+    gap: 0.6rem;
+    align-items: baseline;
+  }
+  .features li::before {
+    content: "";
+    flex: none;
+    width: 0.55rem;
+    height: 0.3rem;
+    border-left: 2px solid var(--accent);
+    border-bottom: 2px solid var(--accent);
+    transform: rotate(-45deg) translateY(-0.15rem);
+  }
+  .btn {
+    width: 100%;
+  }
+  .disabled {
+    cursor: not-allowed;
+  }
+  .disabled:hover {
+    transform: none;
+  }
+  .fine {
+    margin-top: 1.5rem;
+    color: var(--muted);
+    text-align: center;
+  }
+</style>

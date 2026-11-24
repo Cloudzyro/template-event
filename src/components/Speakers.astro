@@ -1,0 +1,57 @@
+---
+import { speakers } from "../data/event";
+import SpeakerCard from "./SpeakerCard.astro";
+
+interface Props {
+  limit?: number;
+}
+const { limit } = Astro.props;
+const list = limit ? speakers.slice(0, limit) : speakers;
+---
+
+<section id="speakers" class="section speakers" aria-labelledby="speakers-title">
+  <div class="wrap">
+    <div class="head">
+      <div class="section-head">
+        <span class="eyebrow">Speakers</span>
+        <h2 id="speakers-title">People who ship</h2>
+        <p>Designers, engineers and researchers sharing what worked, what didn't and what they would do next time.</p>
+      </div>
+      {limit && limit < speakers.length && <a class="btn btn-ghost" href="/speakers/">All {speakers.length} speakers</a>}
+    </div>
+    <ul class="grid">
+      {list.map((s) => <li><SpeakerCard speaker={s} /></li>)}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .speakers {
+    background: var(--bg-raised);
+    border-block: 1px solid var(--line);
+  }
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: end;
+    gap: 1rem;
+  }
+  .head .btn {
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
+  }
+  .grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+  }
+  @media (max-width: 520px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+  }
+</style>

@@ -1,0 +1,22 @@
+---
+import Base from "../layouts/Base.astro";
+import Hero from "../components/Hero.astro";
+import Agenda from "../components/Agenda.astro";
+import Speakers from "../components/Speakers.astro";
+import Venue from "../components/Venue.astro";
+import Sponsors from "../components/Sponsors.astro";
+import Tickets from "../components/Tickets.astro";
+import Faq from "../components/Faq.astro";
+import Contact from "../components/Contact.astro";
+---
+
+<Base>
+  <Hero />
+  <Speakers limit={8} />
+  <Agenda />
+  <Tickets />
+  <Venue />
+  <Sponsors />
+  <Faq />
+  <Contact />
+</Base>

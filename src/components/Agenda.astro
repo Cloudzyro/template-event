@@ -1,0 +1,314 @@
+---
+import { days, sessions, speakers, tracks } from "../data/event";
+import { formatTime } from "../lib/time";
+
+const trackById = Object.fromEntries(tracks.map((t) => [t.id, t]));
+const speakerBySlug = Object.fromEntries(speakers.map((s) => [s.slug, s]));
+const sorted = [...sessions].sort((a, b) => a.day - b.day || a.start.localeCompare(b.start));
+---
+
+<section id="agenda" class="section" aria-labelledby="agenda-title">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Agenda</span>
+      <h2 id="agenda-title">Two days, three tracks</h2>
+      <p>Talks on Build and Design run side by side. Lab workshops are small and hands-on. Breaks, keynotes and the party bring everyone together.</p>
+    </div>
+
+    <div class="toolbar">
+      <nav class="days" aria-label="Jump to day">
+        {days.map((d) => <a href={`#day-${d.day}`}>{d.label}<span>{d.date}</span></a>)}
+      </nav>
+      <div class="filters" role="group" aria-label="Filter by track" hidden>
+        <button type="button" data-filter="all" aria-pressed="true">All tracks</button>
+        {tracks.map((t) => (
+          <button type="button" data-filter={t.id} aria-pressed="false">
+            <span class="dot" style={`background:${t.color}`}></span>{t.name}
+          </button>
+        ))}
+      </div>
+    </div>
+    <p class="filter-status visually-hidden" aria-live="polite"></p>
+
+    <ul class="legend">
+      {tracks.map((t) => (
+        <li><span class="dot" style={`background:${t.color}`}></span><strong>{t.name}</strong> {t.description}</li>
+      ))}
+    </ul>
+
+    {days.map((d) => (
+      <div class="day" id={`day-${d.day}`}>
+        <h3 class="day-title">{d.label}<span>{d.date}</span></h3>
+        <ol class="sessions">
+          {sorted.filter((s) => s.day === d.day).map((s) => {
+            const track = s.track === "all" ? null : trackById[s.track];
+            return (
+              <li class={`session kind-${s.kind ?? "talk"}`} data-track={s.track} style={track ? `--track:${track.color}` : undefined}>
+                <p class="time">
+                  <time>{formatTime(s.start)}</time>
+                  <span class="until">to {formatTime(s.end)}</span>
+                </p>
+                <div class="body">
+                  <p class="tags">
+                    {track && <span class="chip"><span class="dot" style={`background:${track.color}`}></span>{track.name}</span>}
+                    {s.kind === "keynote" && <span class="chip key">Keynote</span>}
+                    {s.kind === "workshop" && <span class="chip">Workshop</span>}
+                    <span class="room">{s.room}</span>
+                  </p>
+                  <h4>{s.title}</h4>
+                  {s.summary && <p class="summary">{s.summary}</p>}
+                  {s.speakers && (
+                    <p class="who">
+                      {s.speakers.map((slug, i) => {
+                        const sp = speakerBySlug[slug];
+                        return sp ? (
+                          <>
+                            {i > 0 && <span aria-hidden="true">, </span>}
+                            <a href={`/speakers/${sp.slug}/`}>{sp.name}</a>
+                            <span class="co">, {sp.company}</span>
+                          </>
+                        ) : null;
+                      })}
+                    </p>
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+    ))}
+  </div>
+</section>
+
+<script>
+  const group = document.querySelector<HTMLElement>("#agenda .filters");
+  const status = document.querySelector<HTMLElement>("#agenda .filter-status");
+  if (group) {
+    group.hidden = false;
+    const buttons = [...group.querySelectorAll<HTMLButtonElement>("button")];
+    const rows = [...document.querySelectorAll<HTMLElement>("#agenda .session")];
+    buttons.forEach((btn) =>
+      btn.addEventListener("click", () => {
+        const f = btn.dataset.filter!;
+        buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+        let shown = 0;
+        rows.forEach((r) => {
+          const show = f === "all" || r.dataset.track === f || r.dataset.track === "all";
+          r.hidden = !show;
+          if (show) shown++;
+        });
+        if (status) status.textContent = `Showing ${shown} sessions${f === "all" ? "" : ` for ${btn.textContent?.trim()}`}`;
+      }),
+    );
+  }
+</script>
+
+<style>
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    position: sticky;
+    top: 4rem;
+    z-index: 5;
+    background: color-mix(in srgb, var(--bg) 90%, transparent);
+    backdrop-filter: blur(10px);
+    padding-block: 0.9rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .days {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .days a {
+    text-decoration: none;
+    font-family: var(--font-display);
+    font-weight: 700;
+    padding: 0.45rem 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: baseline;
+  }
+  .days a span {
+    color: var(--muted);
+    font-weight: 500;
+    font-size: 0.85rem;
+  }
+  .days a:hover {
+    border-color: var(--text);
+  }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .filters[hidden] {
+    display: none;
+  }
+  .filters button {
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--muted);
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.4rem 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    cursor: pointer;
+  }
+  .filters button[aria-pressed="true"] {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+  }
+  .dot {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    display: inline-block;
+    flex: none;
+  }
+  .legend {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0 0;
+    display: grid;
+    gap: 0.5rem 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  .legend li {
+    display: flex;
+    gap: 0.5rem;
+    align-items: baseline;
+  }
+  .legend strong {
+    color: var(--text);
+  }
+  .day {
+    margin-top: 3rem;
+    scroll-margin-top: 9rem;
+  }
+  .day-title {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  .day-title span {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--muted);
+    letter-spacing: 0;
+    font-weight: 400;
+  }
+  .sessions {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .session {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: 1.5rem;
+    padding: 1.5rem 0 1.5rem 1.25rem;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .session::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 1.5rem;
+    bottom: 1.5rem;
+    width: 3px;
+    border-radius: 3px;
+    background: var(--track, var(--line));
+  }
+  .session[hidden] {
+    display: none;
+  }
+  .kind-break,
+  .kind-social {
+    background: repeating-linear-gradient(-45deg, transparent 0 12px, rgb(255 255 255 / 0.02) 12px 24px);
+  }
+  .kind-keynote {
+    --track: var(--accent);
+  }
+  .time {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    display: grid;
+    align-content: start;
+    gap: 0.15rem;
+  }
+  .until {
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.6rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  .key {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .room {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  h4 {
+    font-size: clamp(1.2rem, 2.4vw, 1.5rem);
+    line-height: 1.2;
+  }
+  .summary {
+    color: var(--muted);
+    margin-top: 0.4rem;
+    max-width: 44rem;
+  }
+  .who {
+    margin-top: 0.6rem;
+    font-weight: 600;
+  }
+  .who a {
+    text-decoration-color: var(--accent);
+    text-underline-offset: 3px;
+  }
+  .co {
+    color: var(--muted);
+    font-weight: 400;
+  }
+  @media (max-width: 640px) {
+    .toolbar {
+      position: static;
+    }
+    .days a span {
+      display: none;
+    }
+    .session {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+    .time {
+      display: flex;
+      gap: 0.5rem;
+      align-items: baseline;
+    }
+  }
+</style>
